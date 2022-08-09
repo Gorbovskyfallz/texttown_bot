@@ -3,7 +3,7 @@ package telegram
 // impl method getME
 
 type Update struct {
-	updateId int     `json:"update_id"`
+	UpdateId int     `json:"update_id"`
 	Message  Message `json:"message"`
 }
 
@@ -17,4 +17,9 @@ type Chat struct {
 
 type RestResponse struct {
 	Result []Update `json:"result"`
+}
+
+type BotMessage struct {
+	ChatID int    `json:"chat_id"`
+	Text   string `json:"text"`
 }
