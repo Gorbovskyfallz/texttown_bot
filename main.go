@@ -8,7 +8,12 @@ import (
 
 func main() {
 
-	fmt.Println(mustToken())
+	//https://api.telegram.org/bot<token>/METHOD_NAME.
+
+	api := "https://api.telegram.org/bot"
+	token := mustToken()
+	finalapi := api + token + "/" + "<method name>"
+	fmt.Println(finalapi)
 
 }
 
@@ -22,5 +27,13 @@ func mustToken() string {
 		log.Fatal("invalid or not defined token for telegram bot")
 	}
 	return *token
+
+}
+
+func getUpdates() {
+
+}
+
+func respond() {
 
 }

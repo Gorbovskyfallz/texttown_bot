@@ -1,4 +1,16 @@
 package telegram
 
-//https://api.telegram.org/bot<token>/METHOD_NAME.
-const requestURL string = "https://api.telegram.org/bot"
+// impl method getME
+
+type Update struct {
+	updateId int     `json:"update_id"`
+	Message  Message `json:"message"`
+}
+
+type Message struct {
+	Chat Chat   `json:"chat"`
+	Text string `json:"text"`
+}
+type Chat struct {
+	ChatId int `json:"id"`
+}
