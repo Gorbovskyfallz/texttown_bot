@@ -1,7 +1,5 @@
 package telegram
 
-// impl method getME
-
 type Update struct {
 	UpdateId int     `json:"update_id"`
 	Message  Message `json:"message"`
