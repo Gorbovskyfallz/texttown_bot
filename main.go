@@ -10,13 +10,6 @@ func main() {
 
 	fmt.Println(mustToken())
 
-	//fetcher = fetcher.New()
-	//processor - processor.New()
-	// tgClient = telegram.New(token) // нельзя создавать токен в виде константы в коде, так как через открытые
-	// getToken = flags.Get(token)
-	// это дело может уйти в другие руки
-	// consumer.Start (fetcher, processor)
-
 }
 
 // функция для считывания токена с помощью флагов при запуске программы
