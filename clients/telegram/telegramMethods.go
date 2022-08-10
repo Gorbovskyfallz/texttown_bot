@@ -6,15 +6,21 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 )
 
-func GetUpdates(botURL string) ([]Update, error) {
+func GetUpdates(botURL string, offset int) ([]Update, error) {
 
-	resp, getErr := http.Get(botURL + "getUpdates")
+	resp, getErr := http.Get(botURL + "getUpdates" + "?offset=" + strconv.Itoa(offset))
 	if getErr != nil {
 		return nil, fmt.Errorf("cant reach updates from server: %w", getErr)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
 	body, bodyReadErr := io.ReadAll(resp.Body)
 	if bodyReadErr != nil {
 		return nil, fmt.Errorf("cant read response body: %w", bodyReadErr)
@@ -27,7 +33,7 @@ func GetUpdates(botURL string) ([]Update, error) {
 	return restResponse.Result, nil
 }
 
-func respond(botURL string, update Update) error {
+func Respond(botURL string, update Update) error {
 	var botMessage BotMessage
 	botMessage.ChatID = update.Message.Chat.ChatId
 	botMessage.Text = update.Message.Text
