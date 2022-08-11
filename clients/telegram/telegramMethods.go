@@ -38,8 +38,8 @@ func Respond(botURL string, update Update) error {
 	botMessage.ChatID = update.Message.Chat.ChatId
 
 	if update.Message.Text == "/getme" {
-		info, _ := GetMeResponse(botURL)
-		info += "\n" + "kekeke"
+		getMeResponse, _ := GetMeResponse(botURL)
+		info := getMeResponse.Result.FirstName + "\n" + getMeResponse.Result.UserName
 
 		botMessage.Text = info
 	} else {
@@ -58,11 +58,13 @@ func Respond(botURL string, update Update) error {
 	return nil
 }
 
-func GetMeResponse(botURL string) (string, error) {
+func GetMeResponse(botURL string) (GetME, error) {
+
+	var getMeresponse GetME
 
 	resp, getErr := http.Get(botURL + "getME")
 	if getErr != nil {
-		return "", fmt.Errorf("cant reach updates from server: %w", getErr)
+		return getMeresponse, fmt.Errorf("cant reach updates from server: %w", getErr)
 	}
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
@@ -72,13 +74,13 @@ func GetMeResponse(botURL string) (string, error) {
 	}(resp.Body)
 	body, bodyReadErr := io.ReadAll(resp.Body)
 	if bodyReadErr != nil {
-		return "", fmt.Errorf("cant read response body: %w", bodyReadErr)
+		return getMeresponse, fmt.Errorf("cant read response body: %w", bodyReadErr)
 	}
-	var getMeresponse GetME
+
 	unmarshErr := json.Unmarshal(body, &getMeresponse)
 	if unmarshErr != nil {
-		return "", fmt.Errorf("cant unmarshal json.body: %w", unmarshErr)
+		return getMeresponse, fmt.Errorf("cant unmarshal json.body: %w", unmarshErr)
 	}
-	return getMeresponse.Result.FirstName, nil
+	return getMeresponse, nil
 
 }
