@@ -37,14 +37,7 @@ func Respond(botURL string, update Update) error {
 	var botMessage BotMessage
 	botMessage.ChatID = update.Message.Chat.ChatId
 
-	if update.Message.Text == "/getme" {
-		getMeResponse, _ := GetMeResponse(botURL)
-		info := getMeResponse.Result.FirstName + "\n" + getMeResponse.Result.UserName
-
-		botMessage.Text = info
-	} else {
-		botMessage.Text = update.Message.Text
-	}
+	botMessage.Text = commandCases(botURL, update.Message.Text)
 
 	buf, marshErr := json.Marshal(botMessage)
 	if marshErr != nil {
@@ -82,5 +75,26 @@ func GetMeResponse(botURL string) (GetME, error) {
 		return getMeresponse, fmt.Errorf("cant unmarshal json.body: %w", unmarshErr)
 	}
 	return getMeresponse, nil
+
+}
+
+func commandCases(botURL string, updateMessage string) (postString string) {
+
+	switch updateMessage {
+
+	case "/getme":
+		{
+			getMeResponse, _ := GetMeResponse(botURL)
+			info := getMeResponse.Result.FirstName + "\n" + getMeResponse.Result.UserName
+
+			postString = info
+
+		}
+	default:
+		postString = "no such command, use /help to see bot commands"
+
+	}
+
+	return postString
 
 }
