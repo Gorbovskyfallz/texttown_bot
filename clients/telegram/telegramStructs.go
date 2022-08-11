@@ -21,3 +21,13 @@ type BotMessage struct {
 	ChatID int    `json:"chat_id"`
 	Text   string `json:"text"`
 }
+
+type GetME struct {
+	Ok     bool   `json:"ok"`
+	Result Result `json:"result"`
+}
+
+type Result struct {
+	FirstName string `json:"first_name"`
+	UserName  string `json:"username"`
+}

@@ -16,6 +16,7 @@ func main() {
 	botToken := non_specific.MustBotToken()
 	botURL := telegramApiURL + botToken + "/"
 	offset := 0
+	//fmt.Println(telegram.GetMeResponse(botURL))
 
 	for {
 		updates, updateErr := telegram.GetUpdates(botURL, offset)
@@ -23,6 +24,7 @@ func main() {
 			log.Println("error in superloop with getting updates", updateErr)
 		}
 		for _, update := range updates {
+
 			err := telegram.Respond(botURL, update)
 			if err != nil {
 				log.Println("kek")
@@ -30,7 +32,7 @@ func main() {
 			offset = update.UpdateId + 1
 			fmt.Println(update.UpdateId)
 		}
-		//fmt.Println(updates)
+
 	}
 
 }
