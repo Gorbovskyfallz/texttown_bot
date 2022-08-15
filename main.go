@@ -1,38 +1,55 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
-	"kek/clients/telegram"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"kek/non_specific"
+	"log"
+)
+
+var numericKeyboard = tgbotapi.NewReplyKeyboard(
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton("1"),
+		tgbotapi.NewKeyboardButton("2"),
+		tgbotapi.NewKeyboardButton("3"),
+	),
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton("4"),
+		tgbotapi.NewKeyboardButton("5"),
+		tgbotapi.NewKeyboardButton("6"),
+	),
 )
 
 func main() {
-
-	//https://api.telegram.org/bot<token>/METHOD_NAME.
-
-	telegramApiURL := "https://api.telegram.org/bot"
-	botToken := non_specific.MustBotToken()
-	botURL := telegramApiURL + botToken + "/"
-	offset := 0
-	//fmt.Println(telegram.GetMeResponse(botURL))
-
-	for {
-		updates, updateErr := telegram.GetUpdates(botURL, offset)
-		if updateErr != nil {
-			log.Println("error in superloop with getting updates", updateErr)
-		}
-		for _, update := range updates {
-
-			err := telegram.Respond(botURL, update)
-			if err != nil {
-				log.Println("kek")
-			}
-			offset = update.UpdateId + 1
-			fmt.Println(update.UpdateId)
-		}
-
+	bot, err := tgbotapi.NewBotAPI(non_specific.MustBotToken())
+	if err != nil {
+		log.Panic(err)
 	}
 
+	bot.Debug = true
+
+	log.Printf("Authorized on account %s", bot.Self.UserName)
+
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
+
+	updates := bot.GetUpdatesChan(u)
+
+	for update := range updates {
+		if update.Message == nil { // ignore non-Message updates
+			continue
+		}
+
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+
+		switch update.Message.Text {
+		case "/menu":
+			msg.ReplyMarkup = numericKeyboard
+		case "/close_menu":
+			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		}
+
+		if _, err := bot.Send(msg); err != nil {
+			log.Panic(err)
+		}
+	}
 }
